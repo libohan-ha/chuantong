@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>chuan't寻物</title>
+    <style>
+        /* 重置样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+            background: #f5f5f7;
+            color: #1d1d1f;
+            line-height: 1.5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 40px auto;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 40px;
+            text-align: center;
+            color: #1d1d1f;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 17px;
+            font-weight: 500;
+            color: #1d1d1f;
+            margin-bottom: 8px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 17px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.05);
+            color: #1d1d1f;
+            transition: all 0.2s ease;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            background: rgba(0,0,0,0.08);
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            font-size: 17px;
+            font-weight: 500;
+            color: #fff;
+            background: #0071e3;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background: #0077ed;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        #result {
+            margin-top: 32px;
+            padding: 24px;
+            border-radius: 16px;
+            background: rgba(0,0,0,0.03);
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #result h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        #result p {
+            font-size: 17px;
+            color: #424245;
+            margin-bottom: 12px;
+        }
+
+        #result ul {
+            list-style: none;
+            margin: 12px 0;
+        }
+
+        #result li {
+            font-size: 17px;
+            color: #424245;
+            margin-bottom: 8px;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        #result li:before {
+            content: "•";
+            position: absolute;
+            left: 8px;
+            color: #0071e3;
+        }
+
+        .success {
+            color: #00b06b !important;
+        }
+
+        .warning {
+            color: #ff453a !important;
+        }
+
+        /* 移除之前所有的日期格式相关样式，添加新的样式 */
+        input[type="date"] {
+            position: relative;
+            min-height: 45px; /* 确保高度足够 */
+        }
+
+        /* 隐藏默认图标 */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            color: transparent;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        /* 未选择日期时显示占位符 */
+        input[type="date"]:invalid {
+            color: transparent;
+        }
+
+        input[type="date"]:invalid::before {
+            content: "年/月/日";
+            color: #86868b;
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* 选择日期后的样式 */
+        input[type="date"]:valid {
+            color: #1d1d1f;
+        }
+
+        /* 日期输入框容器 */
+        .date-input-container {
+            position: relative;
+            width: 100%;
+        }
+
+        /* 自定义日历图标 */
+        .date-input-container::after {
+            content: "";
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            pointer-events: none;
+        }
+
+        /* 调整日期输入框右侧内边距，为图标留出空间 */
+        input[type="date"] {
+            padding-right: 48px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>寻物助手</h1>
+        
+        <div id="inputForm">
+            <div class="form-group">
+                <label>丢失日期</label>
+                <div class="date-input-container">
+                    <input type="date" 
+                           id="lostDate" 
+                           required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>丢失时辰</label>
+                <select id="timeSlot">
+                    <option value="子">子时 (23:00-1:00)</option>
+                    <option value="丑">丑时 (1:00-3:00)</option>
+                    <option value="寅">寅时 (3:00-5:00)</option>
+                    <option value="卯">卯时 (5:00-7:00)</option>
+                    <option value="辰">辰时 (7:00-9:00)</option>
+                    <option value="巳">巳时 (9:00-11:00)</option>
+                    <option value="午">午时 (11:00-13:00)</option>
+                    <option value="未">未时 (13:00-15:00)</option>
+                    <option value="申">申时 (15:00-17:00)</option>
+                    <option value="酉">酉时 (17:00-19:00)</option>
+                    <option value="戌">戌时 (19:00-21:00)</option>
+                    <option value="亥">亥时 (21:00-23:00)</option>
+                </select>
+            </div>
+            
+            <button onclick="analyze()">开始分析</button>
+        </div>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // 天干地支转换规则
+        const stemBranchRules = {
+            stems: ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'],
+            branches: ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
+        };
+
+        // 落空规则
+        const emptyRules = {
+            '甲己': ['申', '酉'],
+            '乙庚': ['午', '未'],
+            '丙辛': ['辰', '巳'],
+            '丁壬': ['寅', '卯'],
+            '戊癸': ['子', '丑']
+        };
+
+        // 方位对应
+        const directionMap = {
+            '建': '正东',
+            '除': '东南',
+            '满': '正南',
+            '平': '西南',
+            '定': '正西',
+            '执': '西北',
+            '破': '正北',
+            '危': '东北'
+        };
+
+        // 位置建议
+        const locationMap = {
+            '子丑': ['树林中', '木质物品附近'],
+            '寅卯': ['高处', '山坡上'],
+            '辰巳': ['向亲友打听'],
+            '午未': ['桌子', '柜子', '抽屉等平面'],
+            '申酉': ['沿路寻找'],
+            '戌亥': ['半空悬挂处']
+        };
+
+        // 计算天干
+        function calculateStem(date) {
+            const baseDate = new Date('1984-01-01'); // 甲子年
+            const days = Math.floor((date - baseDate) / (24 * 60 * 60 * 1000));
+            const stemIndex = Math.floor(days % 10);
+            return stemBranchRules.stems[stemIndex];
+        }
+
+        // 检查是否落空
+        function checkEmpty(stem, branch) {
+            for (let [stems, branches] of Object.entries(emptyRules)) {
+                if (stems.includes(stem) && branches.includes(branch)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // 获取位置建议
+        function getLocationSuggestions(timeSlot) {
+            for (let [slots, locations] of Object.entries(locationMap)) {
+                if (slots.includes(timeSlot)) {
+                    return locations;
+                }
+            }
+            return [];
+        }
+
+        // 获取方位
+        function getDirection(stem, branch) {
+            // 简化版方位判断，实际应该根据更复杂的规则
+            const directions = Object.values(directionMap);
+            const index = (stemBranchRules.stems.indexOf(stem) + 
+                          stemBranchRules.branches.indexOf(branch)) % 8;
+            return directions[index];
+        }
+
+        // 分析函数
+        function analyze() {
+            const lostDate = new Date(document.getElementById('lostDate').value);
+            const timeSlot = document.getElementById('timeSlot').value;
+            const resultDiv = document.getElementById('result');
+
+            if (!lostDate || !timeSlot) {
+                alert('请选择日期和时辰');
+                return;
+            }
+
+            // 计算天干
+            const stem = calculateStem(lostDate);
+            
+            // 检查是否落空
+            const isEmpty = checkEmpty(stem, timeSlot);
+            
+            // 生成结果HTML
+            let resultHTML = '';
+            if (isEmpty) {
+                resultHTML = `
+                    <h3 class="warning">分析结果：物品可能较难找回</h3>
+                    <p>原因：根据天干地支判断，此时物品落空</p>
+                `;
+            } else {
+                const direction = getDirection(stem, timeSlot);
+                const locations = getLocationSuggestions(timeSlot);
+                
+                resultHTML = `
+                    <h3 class="success">分析结果：物品有望找回</h3>
+                    <p>建议寻找方位：${direction}</p>
+                    <p>可能的位置：</p>
+                    <ul>
+                        ${locations.map(loc => `<li>${loc}</li>`).join('')}
+                    </ul>
+                    <p>提示：以上建议仅供参考，请结合实际情况寻找</p>
+                `;
+            }
+
+            resultDiv.innerHTML = resultHTML;
+            resultDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
